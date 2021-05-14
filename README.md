@@ -1,7 +1,7 @@
 # aws
-Make sure your cli-aws is working properly in your terminal.
-Install Ansible with the command <b>apt-get install ansible</b>.<br>
-Install Boto from pip3 install boto.<br>
+Make sure your cli-aws is working properly in your terminal.<br>
+Install Ansible with the command <i>apt-get install ansible</i>.<br>
+Install Boto with <i>pip3 install boto</i>.<br>
 Install the read_csv and teh aws.iam collection for ansible by typing:<br>
   ansible-galaxy collection install community.general<br>
   ansible-galaxy collection install community.aws<br>
