@@ -24,7 +24,7 @@
       community.aws.iam:
         iam_type: user
         name: "{{ item.value.user }}"
-        state: absent
+        state: present
         password: "{{ item.value.password }}"
         groups: "{{ item.value.group }}"
         access_key_state: create
