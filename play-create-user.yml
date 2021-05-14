@@ -8,9 +8,10 @@
 # 
 # CSV file ex:
 #   user,group,password
-#   mara.bela,Estagiarios,mudasenha
+#   mara.bela,Estagiarios,12342@pass
 
 # Read a CSV file and save data into register
+
 - hosts: localhost
   tasks:
     - read_csv:
