@@ -1,0 +1,30 @@
+# Example CSV file with header - create users on AWS
+# 
+# Install community.general.read_csv module by typing ansible-galaxy collection install community.general
+# Install community.aws.iam by typing ansible-galaxy collection install community.aws
+# 
+# Create groups first so users can be allocated to them according to the CSV file
+# Change 'state' to 'absent' to delete users from the same CSV file
+# 
+# CSV file ex:
+#   user,group,password
+#   mara.bela,Estagiarios,mudasenha
+
+# Read a CSV file and save data into register
+- hosts: localhost
+  tasks:
+    - read_csv:
+        path: users2.csv
+        key: user
+      register: users
+ 
+# Basic user creation
+    - name: Create new IAM users with API keys
+      community.aws.iam:
+        iam_type: user
+        name: "{{ item.value.user }}"
+        state: absent
+        password: "{{ item.value.password }}"
+        groups: "{{ item.value.group }}"
+        access_key_state: create
+      loop: "{{ users.dict|dict2items }}"
