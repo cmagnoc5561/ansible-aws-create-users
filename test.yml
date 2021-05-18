@@ -1,0 +1,76 @@
+- hosts: localhost
+  tasks:
+# Create new groups
+    - name: Create new groups
+      community.aws.iam:
+        iam_type: group
+        name: "{{ item }}"
+        state: present
+      loop:
+        - CloudAdmin
+        - DBA
+        - Estagiarios
+        - LinuxAdmin
+        - RedesAdmin
+      register: new_groups
+      
+# Apply Enforce-MFA policy to the groups
+    - name: Apply Enforce-MFA policy to groups
+      community.aws.iam_policy:
+        iam_type: group
+        iam_name: "{{ item }}"
+        policy_name: "Enforce-MFA"
+        policy_document: policy.json
+        state: present
+      loop:
+         - CloudAdmin
+         - DBA
+         - Estagiarios
+         - LinuxAdmin
+         - RedesAdmin
+      register: apply_policy
+# Attach a managed policy using its ARN
+    - name: Attach a managed policy using its ARN group CloudAdmin
+      community.aws.iam_group:
+       name: "CloudAdmin"
+       managed_policies:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+       state: present
+    - name: Attach a managed policy using its ARN group DBA
+      community.aws.iam_group:
+       name: "DBA"
+       managed_policies:
+        - arn:aws:iam::aws:policy/AmazonRDSFullAccess
+       state: present
+    - name: Attach a managed policy using its ARN group Estagiarios
+      community.aws.iam_group:
+       name: "Estagiarios"
+       managed_policies:
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+       state: present
+    - name: Attach a managed policy using its ARN group LinuxAdmin
+      community.aws.iam_group:
+       name: "LinuxAdmin"
+       managed_policies:
+        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+       state: present
+    - name: Attach a managed policy using its ARN group RedesAdmin
+      community.aws.iam_group:
+       name: "RedesAdmin"
+       managed_policies:
+        - arn:aws:iam::aws:policy/AmazonVPCFullAccess
+       state: present
+# Basic user creation
+    - read_csv:
+        path: users2.csv
+        key: user
+      register: users
+    - name: Create new IAM users with API keys
+      community.aws.iam:
+        iam_type: user
+        name: "{{ item.value.user }}"
+        state: present
+        password: "{{ item.value.password }}"
+        groups: "{{ item.value.group }}"
+        access_key_state: create
+      loop: "{{ users.dict|dict2items }}"

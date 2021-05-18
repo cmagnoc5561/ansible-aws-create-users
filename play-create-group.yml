@@ -1,0 +1,29 @@
+- hosts: localhost
+  tasks:
+  # Create new groups
+    - name: Create new groups
+      community.aws.iam_group:
+        name: "{{ item }}"
+        managed_policy:
+           - arn:aws:iam::<<acc number>>:policy/EnforceMFA #add you AWS acc number
+        state: present
+      loop:
+        - Newgroup1
+        - Newgroup2
+      register: new_groups
+
+    # Print results
+    - name: Print results
+      debug:
+        msg: "{{ item.iam_group.group.group_name }}"
+      loop: "{{ new_groups.results }}"
+    
+    # Apply Enforce-MFA policy to new groups
+    - name: Apply Enforce-MFA policy to groups
+      community.aws.iam_policy:
+        iam_type: group
+        iam_name: "{{ item.iam_group.group.group_name }}"
+        policy_name: "Enforce-MFA2"
+        policy_document: force_mfapolicy.json
+        state: present
+      loop: "{{ new_groups.results }}" # You may also list the name of the groups instead, in case you have problems with this variable.
