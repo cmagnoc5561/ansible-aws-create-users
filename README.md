@@ -10,3 +10,5 @@ Install the read_csv and the aws.iam collection for ansible by typing:<br>
 Create your groups first so you can allocate users to the respective groups and its policies.<br>
 
 To delete users, change the term 'present' to 'absent' in the state line.<br>
+
+Ansible 2.9 might have problems using dictionary variable references. Update to 2.10 when possible.
