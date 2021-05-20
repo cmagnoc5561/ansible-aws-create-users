@@ -29,6 +29,7 @@
          - LinuxAdmin
          - RedesAdmin
       register: apply_policy
+
 # Attach a managed policy using its ARN
     - name: Attach a managed policy using its ARN group CloudAdmin
       community.aws.iam_group:
@@ -60,6 +61,7 @@
        managed_policies:
         - arn:aws:iam::aws:policy/AmazonVPCFullAccess
        state: present
+
 # Basic user creation
     - read_csv:
         path: users2.csv
